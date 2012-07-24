@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine, MetaData, Table
+from sqlalchemy.orm import sessionmaker
 
 # TODO support mutliple DBs via db.connections
 class Bridge(object):
@@ -6,6 +7,12 @@ class Bridge(object):
         # prep the attributes, allowing them to be lazily loaded
         self._meta = None
         self._tables = {}
+        self._sessionmaker = None
+
+    def get_session(self):
+        if not self._sessionmaker:
+            self._sessionmaker = sessionmaker(bind=self.meta.bind)
+        return self._sessionmaker()
         
     def connection_url(self):
         """Build a URL for :py:func:`sqlalchemy.create_engine`
