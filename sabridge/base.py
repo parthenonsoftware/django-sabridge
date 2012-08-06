@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import NullPool
 
 # TODO support mutliple DBs via db.connections
 class Bridge(object):
@@ -64,7 +65,7 @@ class Bridge(object):
         # (e.g. during a TestCase)
         if self._meta is None:
             self._meta = MetaData()
-            self._meta.bind = create_engine(self.connection_url())
+            self._meta.bind = create_engine(self.connection_url(), poolclass=NullPool)
         return self._meta
 
 def urlbuild(scheme, path, username=None, password=None, hostname=None, port=None):
